@@ -12,8 +12,13 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.unaskividicomprayventadeautos.ui.login.LoginActivity;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -65,16 +70,27 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Cargar el inventario desde SharedPreferences
                 SharedPreferences prefs = getSharedPreferences("Inventario", MODE_PRIVATE);
-                Set<String> inventario = prefs.getStringSet("autos", new HashSet<>());
+                String jsonInventario = prefs.getString("autosJson", "[]");
                 
-                if (inventario.isEmpty()) {
+                try {
+                    Gson gson = new Gson();
+                    Type type = new TypeToken<ArrayList<DetalleAutoActivity.AutoInventario>>(){}.getType();
+                    ArrayList<?> inventario = gson.fromJson(jsonInventario, type);
+                    
+                    if (inventario == null || inventario.isEmpty()) {
+                        Toast.makeText(MainActivity.this, 
+                            "No hay autos en el inventario", 
+                            Toast.LENGTH_SHORT).show();
+                    } else {
+                        Intent intent = new Intent(MainActivity.this, DetalleAutoActivity.class);
+                        intent.putExtra("mostrar_inventario", true);
+                        startActivity(intent);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                     Toast.makeText(MainActivity.this, 
-                        "No hay autos en el inventario", 
+                        "Error al cargar el inventario", 
                         Toast.LENGTH_SHORT).show();
-                } else {
-                    Intent intent = new Intent(MainActivity.this, DetalleAutoActivity.class);
-                    intent.putExtra("mostrar_inventario", true);
-                    startActivity(intent);
                 }
             }
         });

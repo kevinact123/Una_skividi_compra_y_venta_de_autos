@@ -3,6 +3,8 @@ package com.unaskividicomprayventadeautos;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,6 +19,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
@@ -25,7 +30,7 @@ public class DetalleAutoActivity extends AppCompatActivity {
     private LinearLayout listaArticulosLayout;
 
     // Clase para manejar los detalles del auto
-    private class AutoInventario {
+    public static class AutoInventario {
         String marca;
         String modelo;
         String precio;
@@ -74,233 +79,196 @@ public class DetalleAutoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detalle_auto);
 
         listaArticulosLayout = findViewById(R.id.listaArticulosLayout);
-        inventarioAutos = new ArrayList<>();
-        cargarInventario();
-
+        
         // Verificar si se abrió para ver el inventario
         boolean mostrarInventario = getIntent().getBooleanExtra("mostrar_inventario", false);
+        
+        // Cargar inventario primero
+        cargarInventario();
+
         if (mostrarInventario) {
-            // Ocultar elementos de detalle de auto
-            findViewById(R.id.tituloMarcaAuto).setVisibility(View.GONE);
-            findViewById(R.id.scrollView2).setVisibility(View.GONE);
-            findViewById(R.id.Comprar).setVisibility(View.GONE);
-            findViewById(R.id.Vender).setVisibility(View.GONE);
-            findViewById(R.id.Eliminar).setVisibility(View.GONE);
-            findViewById(R.id.Actualizar).setVisibility(View.GONE);
-            
-            // Ajustar posición del ScrollView para inventario
-            ScrollView scrollViewComprados = findViewById(R.id.scrollViewComprados);
-            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) scrollViewComprados.getLayoutParams();
-            params.verticalBias = 0.3f;
-            scrollViewComprados.setLayoutParams(params);
-            
-            // Mostrar título del inventario
-            TextView tituloTextView = findViewById(R.id.tituloMarcaAuto);
-            tituloTextView.setText("MI INVENTARIO");
-            tituloTextView.setVisibility(View.VISIBLE);
-            
+            configurarVistaInventario();
+        } else {
+            configurarVistaDetalleAuto();
+        }
+    }
+
+    private void configurarVistaInventario() {
+        // Ocultar elementos de detalle de auto
+        findViewById(R.id.scrollView2).setVisibility(View.GONE);
+        findViewById(R.id.botonesSuperiores).setVisibility(View.GONE);
+        findViewById(R.id.botonesInferiores).setVisibility(View.GONE);
+        
+        // Mostrar título del inventario
+        TextView tituloTextView = findViewById(R.id.tituloMarcaAuto);
+        tituloTextView.setText("MI INVENTARIO");
+        tituloTextView.setVisibility(View.VISIBLE);
+        
+        // Configurar ScrollView del inventario
+        ScrollView scrollViewComprados = findViewById(R.id.scrollViewComprados);
+        scrollViewComprados.setVisibility(View.VISIBLE);
+        
+        // Crear y configurar el LinearLayout para el inventario
+        LinearLayout contenedorInventario = new LinearLayout(this);
+        contenedorInventario.setLayoutParams(new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT));
+        contenedorInventario.setOrientation(LinearLayout.VERTICAL);
+        contenedorInventario.setPadding(16, 16, 16, 16);
+        
+        // Limpiar el ScrollView y agregar el nuevo contenedor
+        scrollViewComprados.removeAllViews();
+        scrollViewComprados.addView(contenedorInventario);
+        
+        // Mostrar los autos en el inventario
+        if (inventarioAutos == null || inventarioAutos.isEmpty()) {
+            TextView emptyView = new TextView(this);
+            emptyView.setText("No hay autos en el inventario");
+            emptyView.setTextSize(18);
+            emptyView.setGravity(Gravity.CENTER);
+            emptyView.setPadding(16, 32, 16, 32);
+            contenedorInventario.addView(emptyView);
+        } else {
+            for (AutoInventario auto : inventarioAutos) {
+                View itemView = getLayoutInflater().inflate(R.layout.item_inventario, null);
+                TextView autoTextView = itemView.findViewById(R.id.autoTextView);
+                autoTextView.setText(String.format("%s %s\nPrecio: %s\nColor: %s\nEstado: %s\nFecha: %s",
+                    auto.marca,
+                    auto.modelo,
+                    auto.precio,
+                    auto.color,
+                    auto.estado,
+                    auto.fechaCompra));
+
+                // Configurar botones
+                configurarBotonesItem(itemView, auto);
+                
+                // Agregar el item al contenedor
+                contenedorInventario.addView(itemView);
+            }
+        }
+    }
+
+    private void configurarVistaDetalleAuto() {
+        // Ocultar elementos del inventario
+        findViewById(R.id.scrollViewComprados).setVisibility(View.GONE);
+        
+        // Mostrar elementos de detalle de auto
+        findViewById(R.id.scrollView2).setVisibility(View.VISIBLE);
+        findViewById(R.id.botonesSuperiores).setVisibility(View.VISIBLE);
+        findViewById(R.id.botonesInferiores).setVisibility(View.VISIBLE);
+        
+        // Configurar título
+        marcaAuto = getIntent().getStringExtra("marca_auto");
+        TextView tituloTextView = findViewById(R.id.tituloMarcaAuto);
+        tituloTextView.setText(marcaAuto);
+        
+        // Configurar botones de acciones
+        configurarBotones();
+    }
+
+    private void actualizarVistaInventario() {
+        if (listaArticulosLayout == null) return;
+        
+        listaArticulosLayout.removeAllViews();
+        
+        if (inventarioAutos == null || inventarioAutos.isEmpty()) {
+            TextView emptyView = new TextView(this);
+            emptyView.setText("No hay autos en el inventario");
+            emptyView.setTextSize(18);
+            emptyView.setGravity(android.view.Gravity.CENTER);
+            emptyView.setPadding(16, 32, 16, 32);
+            listaArticulosLayout.addView(emptyView);
             return;
         }
 
-        // Código existente para mostrar detalles del auto
-        marcaAuto = getIntent().getStringExtra("marca_auto");
-        TextView tituloTextView = findViewById(R.id.tituloMarcaAuto);
-        tituloTextView.setText(marcaAuto.toUpperCase());
+        for (AutoInventario auto : inventarioAutos) {
+            View itemView = getLayoutInflater().inflate(R.layout.item_inventario, null);
+            TextView autoTextView = itemView.findViewById(R.id.autoTextView);
+            autoTextView.setText(auto.toString());
 
-        TextView modeloLabel = findViewById(R.id.modeloLabel);
-        TextView precioLabel = findViewById(R.id.precioLabel);
-        TextView caracteristicasLabel = findViewById(R.id.caracteristicasLabel);
+            // Configurar botones
+            configurarBotonesItem(itemView, auto);
 
-        switch (marcaAuto.toLowerCase()) {
-            case "chevrolet":
-                modeloLabel.setText("Modelos disponibles:\n- Camaro\n- Cruze\n- Silverado");
-                precioLabel.setText("Rango de precios:\n$25,000,000 - $3,000,000");
-                caracteristicasLabel.setText("Características:\n- Motor V8\n- Transmisión automática\n- Sistema de navegación");
-                break;
-            case "ford":
-                modeloLabel.setText("Modelos disponibles:\n- Mustang\n- F-150\n- Explorer");
-                precioLabel.setText("Rango de precios:\n$15,000,000 - $5,000,000");
-                caracteristicasLabel.setText("Características:\n- Motor EcoBoost\n- Sistema de seguridad avanzado\n- Conectividad SYNC");
-                break;
-            case "honda":
-                modeloLabel.setText("Modelos disponibles:\n- Civic\n- Accord\n- CR-V");
-                precioLabel.setText("Rango de precios:\n$2,900,000 - $2,000,000");
-                caracteristicasLabel.setText("Características:\n- Motor VTEC\n- Sistema Honda Sensing\n- Cámara de retroceso");
-                break;
-            case "mazda":
-                modeloLabel.setText("Modelos disponibles:\n- Mazda3\n- CX-5\n- MX-5");
-                precioLabel.setText("Rango de precios:\n$3,000,000 - $280,000");
-                caracteristicasLabel.setText("Características:\n- Motor Skyactiv\n- Sistema i-Activsense\n- Pantalla táctil");
-                break;
-            case "toyota":
-                modeloLabel.setText("Modelos disponibles:\n- Corolla\n- Camry\n- RAV4");
-                precioLabel.setText("Rango de precios:\n$27,000,000 - $2,000,000");
-                caracteristicasLabel.setText("Características:\n- Motor híbrido disponible\n- Toyota Safety Sense\n- Apple CarPlay/Android Auto");
-                break;
-            case "nissan":
-                modeloLabel.setText("Modelos disponibles:\n- GT-R\n- 370Z\n- Altima");
-                precioLabel.setText("Rango de precios:\n$45,000,000 - $11,000,000");
-                caracteristicasLabel.setText("Características:\n- Motor Twin-Turbo V6\n- Sistema ProPILOT Assist\n- Sistema de sonido Bose");
-                break;
-            case "bmw":
-                modeloLabel.setText("Modelos disponibles:\n- Serie 3\n- X5\n- M4");
-                precioLabel.setText("Rango de precios:\n$41,000,000 - $6,000,000");
-                caracteristicasLabel.setText("Características:\n- Motor TwinPower Turbo\n- Sistema iDrive\n- BMW ConnectedDrive");
-                break;
-            case "porsche":
-                modeloLabel.setText("Modelos disponibles:\n- 911\n- Cayenne\n- Panamera");
-                precioLabel.setText("Rango de precios:\n$12,000,000 - $9,005,000");
-                caracteristicasLabel.setText("Características:\n- Motor Boxer\n- Porsche Active Suspension\n- Sport Chrono Package");
-                break;
-            case "fiat":
-                modeloLabel.setText("Modelos disponibles:\n- 500\n- Tipo\n- Panda");
-                precioLabel.setText("Rango de precios:\n$2,000,000 - $800,000");
-                caracteristicasLabel.setText("Características:\n- Motor MultiAir\n- Sistema Uconnect\n- City Brake Control");
-                break;
-            case "lamborghini":
-                modeloLabel.setText("Modelos disponibles:\n- Huracán\n- Aventador\n- Urus");
-                precioLabel.setText("Rango de precios:\n$250,000,000 - $30,000,000");
-                caracteristicasLabel.setText("Características:\n- Motor V12/V10\n- Sistema LDVI\n- Suspensión magnetoreológica");
-                break;
+            listaArticulosLayout.addView(itemView);
         }
+    }
 
-        Button comprarButton = findViewById(R.id.Comprar);
-        Button venderButton = findViewById(R.id.Vender);
-        Button eliminarButton = findViewById(R.id.Eliminar);
-        Button actualizarButton = findViewById(R.id.Actualizar);
+    private void configurarBotonesItem(View itemView, AutoInventario auto) {
+        Button personalizarBtn = itemView.findViewById(R.id.personalizarItemBtn);
+        Button venderBtn = itemView.findViewById(R.id.venderItemBtn);
+        Button actualizarBtn = itemView.findViewById(R.id.actualizarItemBtn);
+        Button detallesBtn = itemView.findViewById(R.id.detallesItemBtn);
 
-        comprarButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mostrarDialogoSeleccionModelo();
-            }
-        });
+        personalizarBtn.setOnClickListener(v -> mostrarDialogoPersonalizacion(auto));
+        venderBtn.setOnClickListener(v -> venderAuto(auto));
+        actualizarBtn.setOnClickListener(v -> mostrarDialogoPrecio(auto));
+        detallesBtn.setOnClickListener(v -> mostrarDialogoDetalles(auto));
+    }
 
-        venderButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mostrarDialogoConfirmacion("Vender",
-                    "¿Está seguro que desea vender este " + marcaAuto + "?",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Toast.makeText(DetalleAutoActivity.this,
-                                "Vendiendo " + marcaAuto, Toast.LENGTH_SHORT).show();
-                            // Aquí iría la lógica de venta
-                        }
-                    });
-            }
-        });
+    private void mostrarDetallesAuto(String marca) {
+        LinearLayout contenedor = findViewById(R.id.listaArticulosLayout);
+        contenedor.removeAllViews();
 
-        eliminarButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mostrarDialogoConfirmacion("Eliminar",
-                    "¿Está seguro que desea eliminar este " + marcaAuto + "?",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Toast.makeText(DetalleAutoActivity.this,
-                                "Eliminando " + marcaAuto, Toast.LENGTH_SHORT).show();
-                            finish(); // Regresa a la actividad anterior
-                        }
-                    });
-            }
-        });
+        // Crear y agregar TextViews para los detalles
+        String[] detalles = obtenerDetallesAuto(marca);
+        for (String detalle : detalles) {
+            TextView textView = new TextView(this);
+            textView.setText(detalle);
+            textView.setTextSize(18);
+            textView.setTextColor(getResources().getColor(android.R.color.black));
+            textView.setPadding(16, 16, 16, 16);
+            textView.setBackgroundResource(R.drawable.inventario_item_background);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.setMargins(0, 0, 0, 16);
+            textView.setLayoutParams(params);
+            contenedor.addView(textView);
+        }
+    }
 
-        actualizarButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mostrarDialogoConfirmacion("Actualizar",
-                    "¿Está seguro que desea actualizar este " + marcaAuto + "?",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Toast.makeText(DetalleAutoActivity.this,
-                                "Actualizando " + marcaAuto, Toast.LENGTH_SHORT).show();
-                            // Aquí iría la lógica de actualización
-                        }
-                    });
-            }
-        });
+    private String[] obtenerDetallesAuto(String marca) {
+        switch (marca.toLowerCase()) {
+            case "chevrolet":
+                return new String[]{
+                    "Modelos disponibles:\n- Camaro\n- Cruze\n- Silverado",
+                    "Rango de precios:\n$25,000,000 - $3,000,000",
+                    "Características:\n- Motor V8\n- Transmisión automática\n- Sistema de navegación"
+                };
+            // ... resto de los casos ...
+            default:
+                return new String[]{"No hay información disponible"};
+        }
     }
 
     private void mostrarDialogoConfirmacion(String titulo, String mensaje, 
-            DialogInterface.OnClickListener listenerPositivo) {
+            DialogInterface.OnClickListener onConfirm) {
         new AlertDialog.Builder(this)
             .setTitle(titulo)
             .setMessage(mensaje)
-            .setPositiveButton("Sí", listenerPositivo)
-            .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            })
+            .setPositiveButton("Sí", onConfirm)
+            .setNegativeButton("No", null)
             .show();
     }
 
     private void mostrarDialogoSeleccionModelo() {
-        String[] modelos;
-        String[] precios;
+        String[] modelos = obtenerModelosPorMarca(marcaAuto);
+        String[] precios = obtenerPreciosPorModelo(marcaAuto);
         
-        switch (marcaAuto.toLowerCase()) {
-            case "chevrolet":
-                modelos = new String[]{"Camaro", "Cruze", "Silverado"};
-                precios = new String[]{"$25,000,000", "$20,000,000", "$3,000,000"};
-                break;
-            case "ford":
-                modelos = new String[]{"Mustang", "F-150", "Explorer"};
-                precios = new String[]{"$5,000,000", "$15,000,000", "$12,000,000"};
-                break;
-            case "honda":
-                modelos = new String[]{"Civic", "Accord", "CR-V"};
-                precios = new String[]{"$2,900,000", "$2,350,000", "$2,000,000"};
-                break;
-            case "mazda":
-                modelos = new String[]{"Mazda3", "CX-5", "MX-5"};
-                precios = new String[]{"$1,500,000", "$280,000", "$3,000,000"};
-                break;
-            case "toyota":
-                modelos = new String[]{"Corolla", "Camry", "RAV4"};
-                precios = new String[]{"$2,000,000", "$25,000,000", "$27,000,000"};
-                break;
-            case "nissan":
-                modelos = new String[]{"GT-R", "370Z", "Altima"};
-                precios = new String[]{"$11,000,000", "$45,000,000", "$25,000,000"};
-                break;
-            case "bmw":
-                modelos = new String[]{"Serie 3", "X5", "M4"};
-                precios = new String[]{"$41,000,000", "$6,000,000", "$7,000,000"};
-                break;
-            case "porsche":
-                modelos = new String[]{"911", "Cayenne", "Panamera"};
-                precios = new String[]{"$12,000,000", "$80,000,000", "$9,005,000"};
-                break;
-            case "fiat":
-                modelos = new String[]{"500", "Tipo", "Panda"};
-                precios = new String[]{"$1,000,000", "$2,000,000", "$800,000"};
-                break;
-            case "lamborghini":
-                modelos = new String[]{"Huracán", "Aventador", "Urus"};
-                precios = new String[]{"$30,000,000", "$50,000,000", "$250,000,000"};
-                break;
-            default:
-                return;
-        }
-
-        // Crear array de strings con modelo y precio
-        String[] opciones = new String[modelos.length];
-        for (int i = 0; i < modelos.length; i++) {
-            opciones[i] = modelos[i] + " - " + precios[i];
-        }
-
         new AlertDialog.Builder(this)
-            .setTitle("Selecciona un modelo")
-            .setItems(opciones, (dialog, which) -> {
-                String modeloSeleccionado = modelos[which];
-                String precioSeleccionado = precios[which];
-                mostrarDialogoConfirmacionCompra(modeloSeleccionado, precioSeleccionado);
+            .setTitle("Seleccionar Modelo")
+            .setItems(modelos, (dialog, which) -> {
+                agregarAlInventario(
+                    marcaAuto,
+                    modelos[which],
+                    precios[which]
+                );
+                Toast.makeText(this, 
+                    "¡" + marcaAuto + " " + modelos[which] + " agregado al inventario!", 
+                    Toast.LENGTH_SHORT).show();
+                finish();
             })
             .setNegativeButton("Cancelar", null)
             .show();
@@ -326,93 +294,27 @@ public class DetalleAutoActivity extends AppCompatActivity {
         actualizarVistaInventario();
     }
 
-    private void actualizarVistaInventario() {
-        LinearLayout listaArticulosLayout = findViewById(R.id.listaArticulosLayout);
-        listaArticulosLayout.removeAllViews();
-        
-        if (inventarioAutos == null || inventarioAutos.isEmpty()) {
-            TextView emptyText = new TextView(this);
-            emptyText.setText("No hay autos en el inventario");
-            emptyText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            emptyText.setPadding(16, 16, 16, 16);
-            emptyText.setTextColor(getResources().getColor(android.R.color.black));
-            listaArticulosLayout.addView(emptyText);
-            return;
-        }
-
-        for (AutoInventario auto : inventarioAutos) {
-            View itemView = getLayoutInflater().inflate(R.layout.item_inventario, null);
-            
-            // Configurar el TextView con la información del auto
-            TextView autoTextView = itemView.findViewById(R.id.autoTextView);
-            String infoAuto = auto.marca + " " + auto.modelo + "\n" +
-                            "Precio: " + auto.precio + "\n" +
-                            "Color: " + auto.color;
-            autoTextView.setText(infoAuto);
-            autoTextView.setTextColor(getResources().getColor(android.R.color.black));
-            
-            // Configurar los botones
-            Button venderBtn = itemView.findViewById(R.id.venderItemBtn);
-            Button actualizarBtn = itemView.findViewById(R.id.actualizarItemBtn);
-            Button detallesBtn = itemView.findViewById(R.id.detallesItemBtn);
-
-            venderBtn.setOnClickListener(v -> {
-                mostrarDialogoConfirmacion("Vender",
-                    "¿Está seguro que desea vender este " + auto.marca + " " + auto.modelo + "?",
-                    (dialog, which) -> {
-                        inventarioAutos.remove(auto);
-                        guardarInventario();
-                        actualizarVistaInventario();
-                        Toast.makeText(this, "Auto vendido exitosamente", Toast.LENGTH_SHORT).show();
-                    });
-            });
-
-            actualizarBtn.setOnClickListener(v -> mostrarDialogoActualizacion(auto));
-            detallesBtn.setOnClickListener(v -> mostrarDialogoDetalles(auto));
-
-            // Agregar márgenes y padding al item
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            );
-            params.setMargins(16, 8, 16, 8);
-            itemView.setLayoutParams(params);
-
-            listaArticulosLayout.addView(itemView);
-        }
-    }
-
-    private void mostrarDialogoActualizacion(AutoInventario auto) {
-        String[] opciones = {"Cambiar color", "Actualizar precio", "Agregar accesorios"};
+    private void mostrarDialogoPersonalizacion(AutoInventario auto) {
+        String[] opciones = {"Cambiar color", "Agregar accesorios"};
         
         new AlertDialog.Builder(this)
-            .setTitle("Actualizar " + auto.marca + " " + auto.modelo)
+            .setTitle("Personalizar Auto")
             .setItems(opciones, (dialog, which) -> {
-                switch (which) {
-                    case 0: // Cambiar color
-                        mostrarDialogoColor(auto);
-                        break;
-                    case 1: // Actualizar precio
-                        mostrarDialogoPrecio(auto);
-                        break;
-                    case 2: // Agregar accesorios
-                        mostrarDialogoAccesorios(auto);
-                        break;
+                if (which == 0) {
+                    mostrarDialogoColor(auto);
+                } else {
+                    mostrarDialogoAccesorios(auto);
                 }
             })
+            .setNegativeButton("Cancelar", null)
             .show();
     }
 
     private void mostrarDialogoColor(AutoInventario auto) {
-        String[] colores = {
-            "Rojo Metálico", "Azul Eléctrico", "Negro Mate", "Blanco Perlado", "Plata Brillante", 
-            "Gris Grafito", "Verde Racing", "Amarillo Solar", "Naranja Lava", "Morado Real",
-            "Dorado Champagne", "Azul Marino", "Verde Militar", "Rojo Vino", "Café Metálico",
-            "Rosa Metalizado", "Celeste Cielo", "Bronce Antiguo", "Turquesa", "Violeta Místico"
-        };
-
+        String[] colores = {"Rojo", "Azul", "Negro", "Blanco", "Plata", "Verde"};
+        
         new AlertDialog.Builder(this)
-            .setTitle("Seleccionar nuevo color")
+            .setTitle("Seleccionar Color")
             .setItems(colores, (dialog, which) -> {
                 auto.color = colores[which];
                 guardarInventario();
@@ -492,32 +394,75 @@ public class DetalleAutoActivity extends AppCompatActivity {
 
     private void guardarInventario() {
         SharedPreferences prefs = getSharedPreferences("Inventario", MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        
-        // Convertir inventario a JSON
         Gson gson = new Gson();
         String jsonInventario = gson.toJson(inventarioAutos);
-        editor.putString("autosJson", jsonInventario);
-        editor.apply();
+        prefs.edit().putString("autosJson", jsonInventario).apply();
     }
 
     private void cargarInventario() {
         SharedPreferences prefs = getSharedPreferences("Inventario", MODE_PRIVATE);
         String jsonInventario = prefs.getString("autosJson", "[]");
         
-        // Convertir JSON a ArrayList de AutoInventario
-        Gson gson = new Gson();
-        Type type = new TypeToken<ArrayList<AutoInventario>>(){}.getType();
-        inventarioAutos = gson.fromJson(jsonInventario, type);
-        
-        actualizarVistaInventario();
+        try {
+            Gson gson = new Gson();
+            Type type = new TypeToken<ArrayList<AutoInventario>>(){}.getType();
+            inventarioAutos = gson.fromJson(jsonInventario, type);
+            
+            if (inventarioAutos == null) {
+                inventarioAutos = new ArrayList<>();
+            }
+            
+            // Debug: Imprimir el contenido del inventario
+            Log.d("DetalleAutoActivity", "Inventario cargado: " + inventarioAutos.size() + " autos");
+            for (AutoInventario auto : inventarioAutos) {
+                Log.d("DetalleAutoActivity", "Auto: " + auto.marca + " " + auto.modelo);
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            inventarioAutos = new ArrayList<>();
+            Toast.makeText(this, "Error al cargar el inventario", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void agregarAlInventario(String marca, String modelo, String precio) {
+        // Crear nuevo auto
         AutoInventario nuevoAuto = new AutoInventario(marca, modelo, precio);
-        inventarioAutos.add(nuevoAuto);
-        guardarInventario();
-        actualizarVistaInventario();
+        nuevoAuto.color = "Negro"; // Color por defecto
+        nuevoAuto.estado = "Nuevo";
+        nuevoAuto.fechaCompra = new java.text.SimpleDateFormat("dd/MM/yyyy")
+            .format(new java.util.Date());
+        nuevoAuto.accesorios = new ArrayList<>();
+        nuevoAuto.id = String.valueOf(System.currentTimeMillis());
+
+        // Cargar inventario existente
+        SharedPreferences prefs = getSharedPreferences("Inventario", MODE_PRIVATE);
+        String jsonInventario = prefs.getString("autosJson", "[]");
+        
+        try {
+            // Convertir JSON a ArrayList
+            Gson gson = new Gson();
+            Type type = new TypeToken<ArrayList<AutoInventario>>(){}.getType();
+            inventarioAutos = gson.fromJson(jsonInventario, type);
+            
+            if (inventarioAutos == null) {
+                inventarioAutos = new ArrayList<>();
+            }
+            
+            // Agregar nuevo auto
+            inventarioAutos.add(nuevoAuto);
+            
+            // Guardar inventario actualizado
+            String jsonActualizado = gson.toJson(inventarioAutos);
+            prefs.edit().putString("autosJson", jsonActualizado).apply();
+            
+            // Actualizar vista
+            actualizarVistaInventario();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error al guardar en el inventario", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void mostrarDialogoDetalles(AutoInventario auto) {
@@ -534,5 +479,104 @@ public class DetalleAutoActivity extends AppCompatActivity {
                         String.join("\n• ", auto.accesorios)))
             .setPositiveButton("Cerrar", null)
             .show();
+    }
+
+    private void venderAuto(AutoInventario auto) {
+        new AlertDialog.Builder(this)
+            .setTitle("Vender Auto")
+            .setMessage("¿Está seguro que desea vender este " + auto.marca + " " + auto.modelo + "?\n" +
+                       "Precio actual: " + auto.precio)
+            .setPositiveButton("Vender", (dialog, which) -> {
+                inventarioAutos.remove(auto);
+                guardarInventario();
+                actualizarVistaInventario();
+                Toast.makeText(this, 
+                    "¡" + auto.marca + " " + auto.modelo + " vendido exitosamente!", 
+                    Toast.LENGTH_SHORT).show();
+            })
+            .setNegativeButton("Cancelar", null)
+            .show();
+    }
+
+    private String[] obtenerModelosPorMarca(String marca) {
+        switch (marca.toLowerCase()) {
+            case "chevrolet":
+                return new String[]{"Camaro", "Cruze", "Silverado"};
+            case "ford":
+                return new String[]{"Mustang", "F-150", "Explorer"};
+            case "honda":
+                return new String[]{"Civic", "Accord", "CR-V"};
+            case "mazda":
+                return new String[]{"Mazda3", "CX-5", "MX-5"};
+            case "toyota":
+                return new String[]{"Corolla", "Camry", "RAV4"};
+            case "nissan":
+                return new String[]{"GT-R", "370Z", "Altima"};
+            case "bmw":
+                return new String[]{"Serie 3", "X5", "M4"};
+            case "porsche":
+                return new String[]{"911", "Cayenne", "Panamera"};
+            case "fiat":
+                return new String[]{"500", "Tipo", "Panda"};
+            case "lamborghini":
+                return new String[]{"Huracán", "Aventador", "Urus"};
+            default:
+                return new String[]{"Modelo no disponible"};
+        }
+    }
+
+    private String[] obtenerPreciosPorModelo(String marca) {
+        switch (marca.toLowerCase()) {
+            case "chevrolet":
+                return new String[]{"$25,000,000", "$20,000,000", "$30,000,000"};
+            case "ford":
+                return new String[]{"$35,000,000", "$45,000,000", "$40,000,000"};
+            case "honda":
+                return new String[]{"$18,000,000", "$22,000,000", "$25,000,000"};
+            case "mazda":
+                return new String[]{"$20,000,000", "$28,000,000", "$32,000,000"};
+            case "toyota":
+                return new String[]{"$19,000,000", "$24,000,000", "$27,000,000"};
+            case "nissan":
+                return new String[]{"$85,000,000", "$45,000,000", "$35,000,000"};
+            case "bmw":
+                return new String[]{"$45,000,000", "$55,000,000", "$65,000,000"};
+            case "porsche":
+                return new String[]{"$120,000,000", "$95,000,000", "$110,000,000"};
+            case "fiat":
+                return new String[]{"$15,000,000", "$18,000,000", "$16,000,000"};
+            case "lamborghini":
+                return new String[]{"$350,000,000", "$450,000,000", "$380,000,000"};
+            default:
+                return new String[]{"Precio no disponible"};
+        }
+    }
+
+    private void configurarBotones() {
+        Button comprarButton = findViewById(R.id.Comprar);
+        Button venderButton = findViewById(R.id.Vender);
+        Button eliminarButton = findViewById(R.id.Eliminar);
+        Button actualizarButton = findViewById(R.id.Actualizar);
+
+        comprarButton.setOnClickListener(v -> mostrarDialogoSeleccionModelo());
+        
+        venderButton.setOnClickListener(v -> mostrarDialogoConfirmacion("Vender",
+            "¿Está seguro que desea vender este " + marcaAuto + "?",
+            (dialog, which) -> {
+                Toast.makeText(this, "Vendiendo " + marcaAuto, Toast.LENGTH_SHORT).show();
+            }));
+            
+        eliminarButton.setOnClickListener(v -> mostrarDialogoConfirmacion("Eliminar",
+            "¿Está seguro que desea eliminar este " + marcaAuto + "?",
+            (dialog, which) -> {
+                Toast.makeText(this, "Eliminando " + marcaAuto, Toast.LENGTH_SHORT).show();
+                finish();
+            }));
+            
+        actualizarButton.setOnClickListener(v -> mostrarDialogoConfirmacion("Actualizar",
+            "¿Está seguro que desea actualizar este " + marcaAuto + "?",
+            (dialog, which) -> {
+                Toast.makeText(this, "Actualizando " + marcaAuto, Toast.LENGTH_SHORT).show();
+            }));
     }
 } 

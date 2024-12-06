@@ -2,51 +2,66 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="8dp"
-    android:background="#FFFFFF"
-    android:layout_margin="4dp"
-    android:elevation="2dp">
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="#F5F5F5"
+    android:layout_margin="8dp"
+    android:elevation="4dp">
 
     <TextView
         android:id="@+id/autoTextView"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:textColor="#000000"
-        android:padding="12dp"
-        android:background="#FFFFFF"
-        android:minHeight="48dp"
-        android:layout_marginEnd="8dp"/>
+        android:textColor="#2E2E2E"
+        android:lineSpacingExtra="4dp"
+        android:background="@drawable/inventario_item_background"
+        android:layout_marginBottom="12dp"/>
 
-    <Button
-        android:id="@+id/venderItemBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:text="Vender"
-        android:textSize="12sp"
-        android:backgroundTint="#07F410"
-        android:layout_marginEnd="8dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
 
-    <Button
-        android:id="@+id/actualizarItemBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:text="Actualizar"
-        android:textSize="12sp"
-        android:textColor="#FFFFFF"
-        android:backgroundTint="#0734FA"/>
+        <Button
+            android:id="@+id/personalizarItemBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="Personalizar"
+            android:textSize="12sp"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#2E9B83"
+            android:layout_marginEnd="8dp"/>
 
-    <Button
-        android:id="@+id/detallesItemBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:text="Detalles"
-        android:textSize="12sp"
-        android:textColor="#FFFFFF"
-        android:backgroundTint="#FF9800"
-        android:layout_marginEnd="8dp"/>
+        <Button
+            android:id="@+id/venderItemBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="Vender"
+            android:textSize="12sp"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#FF9800"
+            android:layout_marginEnd="8dp"/>
 
+        <Button
+            android:id="@+id/actualizarItemBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="Actualizar"
+            android:textSize="12sp"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#1976D2"
+            android:layout_marginEnd="8dp"/>
+
+        <Button
+            android:id="@+id/detallesItemBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="Detalles"
+            android:textSize="12sp"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#607D8B"/>
+    </LinearLayout>
 </LinearLayout> 

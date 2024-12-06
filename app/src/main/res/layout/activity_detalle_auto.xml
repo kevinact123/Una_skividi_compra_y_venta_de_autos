@@ -4,116 +4,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F9FAF9"
-    android:backgroundTint="#2E9B83">
+    android:backgroundTint="#2E9B83"
+    android:padding="16dp">
 
     <TextView
         android:id="@+id/tituloMarcaAuto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="24sp"
+        android:textSize="28sp"
         android:textStyle="bold"
         android:textColor="#0B0B0B"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <ScrollView
         android:id="@+id/scrollView2"
-        android:layout_width="350dp"
-        android:layout_height="250dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
         android:background="#EFEBEB"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintHeight_percent="0.35"
         app:layout_constraintTop_toBottomOf="@id/tituloMarcaAuto"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp">
-
-        <LinearLayout
-            android:id="@+id/detalleAutoLinearLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:id="@+id/modeloLabel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Modelos disponibles:"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:textSize="18sp"
-                android:background="#FFFFFF"
-                android:elevation="2dp"
-                android:layout_margin="4dp"
-                android:padding="12dp"/>
-
-            <TextView
-                android:id="@+id/precioLabel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Rango de precios:"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:textSize="18sp"
-                android:background="#FFFFFF"
-                android:elevation="2dp"
-                android:layout_margin="4dp"
-                android:padding="12dp"/>
-
-            <TextView
-                android:id="@+id/caracteristicasLabel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Características:"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:textSize="18sp"
-                android:background="#FFFFFF"
-                android:elevation="2dp"
-                android:layout_margin="4dp"
-                android:padding="12dp"/>
-        </LinearLayout>
-    </ScrollView>
-
-    <Button
-        android:id="@+id/Comprar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#0EF206"
-        android:text="Comprar"
-        android:textColor="#0B0B0B"
-        app:layout_constraintTop_toBottomOf="@+id/scrollView2"
-        app:layout_constraintBottom_toTopOf="@+id/scrollViewComprados"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/Vender"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        android:layout_marginHorizontal="16dp"/>
-
-    <Button
-        android:id="@+id/Vender"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#07F410"
-        android:text="Vender"
-        android:textColor="#141313"
-        app:layout_constraintTop_toBottomOf="@+id/scrollView2"
-        app:layout_constraintBottom_toTopOf="@+id/scrollViewComprados"
-        app:layout_constraintStart_toEndOf="@+id/Comprar"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginHorizontal="16dp"/>
-
-    <ScrollView
-        android:id="@+id/scrollViewComprados"
-        android:layout_width="350dp"
-        android:layout_height="150dp"
-        android:background="#EFEBEB"
-        android:padding="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/Comprar"
-        app:layout_constraintBottom_toTopOf="@+id/Actualizar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginVertical="16dp">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:id="@+id/listaArticulosLayout"
@@ -123,32 +40,92 @@
             android:padding="8dp"/>
     </ScrollView>
 
-    <Button
-        android:id="@+id/Eliminar"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/botonesSuperiores"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="#F60808"
-        android:text="Eliminar"
-        android:textColor="#141313"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.762"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scrollViewComprados"
-        app:layout_constraintVertical_bias="0.9" />
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/scrollView2">
 
-    <Button
-        android:id="@+id/Actualizar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#0734FA"
-        android:text="Actualizar"
-        android:textColor="#FFFFFF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.24"
+        <Button
+            android:id="@+id/Comprar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="8dp"
+            android:backgroundTint="#4CAF50"
+            android:text="Comprar"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:padding="12dp"/>
+
+        <Button
+            android:id="@+id/Vender"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="8dp"
+            android:backgroundTint="#2E9B83"
+            android:text="Vender"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:padding="12dp"/>
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/scrollViewComprados"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        android:background="#EFEBEB"
+        android:padding="12dp"
+        app:layout_constraintHeight_percent="0.35"
+        app:layout_constraintTop_toBottomOf="@+id/botonesSuperiores"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scrollViewComprados"
-        app:layout_constraintVertical_bias="0.9" />
+        app:layout_constraintEnd_toEndOf="parent">
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
+            
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/botonesInferiores"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/scrollViewComprados">
+
+        <Button
+            android:id="@+id/Actualizar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="8dp"
+            android:backgroundTint="#1976D2"
+            android:text="Actualizar"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:padding="12dp"/>
+
+        <Button
+            android:id="@+id/Eliminar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="8dp"
+            android:backgroundTint="#F44336"
+            android:text="Eliminar"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:padding="12dp"/>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout> 
