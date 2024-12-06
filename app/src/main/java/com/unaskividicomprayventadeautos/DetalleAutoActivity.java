@@ -7,10 +7,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -72,6 +74,7 @@ public class DetalleAutoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detalle_auto);
 
         listaArticulosLayout = findViewById(R.id.listaArticulosLayout);
+        inventarioAutos = new ArrayList<>();
         cargarInventario();
 
         // Verificar si se abrió para ver el inventario
@@ -84,6 +87,12 @@ public class DetalleAutoActivity extends AppCompatActivity {
             findViewById(R.id.Vender).setVisibility(View.GONE);
             findViewById(R.id.Eliminar).setVisibility(View.GONE);
             findViewById(R.id.Actualizar).setVisibility(View.GONE);
+            
+            // Ajustar posición del ScrollView para inventario
+            ScrollView scrollViewComprados = findViewById(R.id.scrollViewComprados);
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) scrollViewComprados.getLayoutParams();
+            params.verticalBias = 0.3f;
+            scrollViewComprados.setLayoutParams(params);
             
             // Mostrar título del inventario
             TextView tituloTextView = findViewById(R.id.tituloMarcaAuto);
@@ -105,52 +114,52 @@ public class DetalleAutoActivity extends AppCompatActivity {
         switch (marcaAuto.toLowerCase()) {
             case "chevrolet":
                 modeloLabel.setText("Modelos disponibles:\n- Camaro\n- Cruze\n- Silverado");
-                precioLabel.setText("Rango de precios:\n$20,000 - $50,000");
+                precioLabel.setText("Rango de precios:\n$25,000,000 - $3,000,000");
                 caracteristicasLabel.setText("Características:\n- Motor V8\n- Transmisión automática\n- Sistema de navegación");
                 break;
             case "ford":
                 modeloLabel.setText("Modelos disponibles:\n- Mustang\n- F-150\n- Explorer");
-                precioLabel.setText("Rango de precios:\n$25,000 - $60,000");
+                precioLabel.setText("Rango de precios:\n$15,000,000 - $5,000,000");
                 caracteristicasLabel.setText("Características:\n- Motor EcoBoost\n- Sistema de seguridad avanzado\n- Conectividad SYNC");
                 break;
             case "honda":
                 modeloLabel.setText("Modelos disponibles:\n- Civic\n- Accord\n- CR-V");
-                precioLabel.setText("Rango de precios:\n$22,000 - $45,000");
+                precioLabel.setText("Rango de precios:\n$2,900,000 - $2,000,000");
                 caracteristicasLabel.setText("Características:\n- Motor VTEC\n- Sistema Honda Sensing\n- Cámara de retroceso");
                 break;
             case "mazda":
                 modeloLabel.setText("Modelos disponibles:\n- Mazda3\n- CX-5\n- MX-5");
-                precioLabel.setText("Rango de precios:\n$24,000 - $48,000");
+                precioLabel.setText("Rango de precios:\n$3,000,000 - $280,000");
                 caracteristicasLabel.setText("Características:\n- Motor Skyactiv\n- Sistema i-Activsense\n- Pantalla táctil");
                 break;
             case "toyota":
                 modeloLabel.setText("Modelos disponibles:\n- Corolla\n- Camry\n- RAV4");
-                precioLabel.setText("Rango de precios:\n$23,000 - $47,000");
+                precioLabel.setText("Rango de precios:\n$27,000,000 - $2,000,000");
                 caracteristicasLabel.setText("Características:\n- Motor híbrido disponible\n- Toyota Safety Sense\n- Apple CarPlay/Android Auto");
                 break;
             case "nissan":
                 modeloLabel.setText("Modelos disponibles:\n- GT-R\n- 370Z\n- Altima");
-                precioLabel.setText("Rango de precios:\n$25,000 - $115,000");
+                precioLabel.setText("Rango de precios:\n$45,000,000 - $11,000,000");
                 caracteristicasLabel.setText("Características:\n- Motor Twin-Turbo V6\n- Sistema ProPILOT Assist\n- Sistema de sonido Bose");
                 break;
             case "bmw":
                 modeloLabel.setText("Modelos disponibles:\n- Serie 3\n- X5\n- M4");
-                precioLabel.setText("Rango de precios:\n$41,000 - $74,000");
+                precioLabel.setText("Rango de precios:\n$41,000,000 - $6,000,000");
                 caracteristicasLabel.setText("Características:\n- Motor TwinPower Turbo\n- Sistema iDrive\n- BMW ConnectedDrive");
                 break;
             case "porsche":
                 modeloLabel.setText("Modelos disponibles:\n- 911\n- Cayenne\n- Panamera");
-                precioLabel.setText("Rango de precios:\n$60,000 - $200,000");
+                precioLabel.setText("Rango de precios:\n$12,000,000 - $9,005,000");
                 caracteristicasLabel.setText("Características:\n- Motor Boxer\n- Porsche Active Suspension\n- Sport Chrono Package");
                 break;
             case "fiat":
                 modeloLabel.setText("Modelos disponibles:\n- 500\n- Tipo\n- Panda");
-                precioLabel.setText("Rango de precios:\n$18,000 - $35,000");
+                precioLabel.setText("Rango de precios:\n$2,000,000 - $800,000");
                 caracteristicasLabel.setText("Características:\n- Motor MultiAir\n- Sistema Uconnect\n- City Brake Control");
                 break;
             case "lamborghini":
                 modeloLabel.setText("Modelos disponibles:\n- Huracán\n- Aventador\n- Urus");
-                precioLabel.setText("Rango de precios:\n$200,000 - $500,000");
+                precioLabel.setText("Rango de precios:\n$250,000,000 - $30,000,000");
                 caracteristicasLabel.setText("Características:\n- Motor V12/V10\n- Sistema LDVI\n- Suspensión magnetoreológica");
                 break;
         }
@@ -266,7 +275,7 @@ public class DetalleAutoActivity extends AppCompatActivity {
                 break;
             case "porsche":
                 modelos = new String[]{"911", "Cayenne", "Panamera"};
-                precios = new String[]{"$120,000", "$80,000", "$95,000"};
+                precios = new String[]{"$12,000,000", "$80,000,000", "$9,005,000"};
                 break;
             case "fiat":
                 modelos = new String[]{"500", "Tipo", "Panda"};
@@ -318,25 +327,34 @@ public class DetalleAutoActivity extends AppCompatActivity {
     }
 
     private void actualizarVistaInventario() {
+        LinearLayout listaArticulosLayout = findViewById(R.id.listaArticulosLayout);
         listaArticulosLayout.removeAllViews();
         
-        if (inventarioAutos.isEmpty()) {
+        if (inventarioAutos == null || inventarioAutos.isEmpty()) {
             TextView emptyText = new TextView(this);
-            emptyText.setText("No hay autos en tu inventario");
+            emptyText.setText("No hay autos en el inventario");
             emptyText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            emptyText.setPadding(8, 16, 8, 16);
+            emptyText.setPadding(16, 16, 16, 16);
+            emptyText.setTextColor(getResources().getColor(android.R.color.black));
             listaArticulosLayout.addView(emptyText);
             return;
         }
 
         for (AutoInventario auto : inventarioAutos) {
-            View itemView = getLayoutInflater().inflate(R.layout.item_inventario, listaArticulosLayout, false);
+            View itemView = getLayoutInflater().inflate(R.layout.item_inventario, null);
+            
+            // Configurar el TextView con la información del auto
             TextView autoTextView = itemView.findViewById(R.id.autoTextView);
+            String infoAuto = auto.marca + " " + auto.modelo + "\n" +
+                            "Precio: " + auto.precio + "\n" +
+                            "Color: " + auto.color;
+            autoTextView.setText(infoAuto);
+            autoTextView.setTextColor(getResources().getColor(android.R.color.black));
+            
+            // Configurar los botones
             Button venderBtn = itemView.findViewById(R.id.venderItemBtn);
             Button actualizarBtn = itemView.findViewById(R.id.actualizarItemBtn);
             Button detallesBtn = itemView.findViewById(R.id.detallesItemBtn);
-
-            autoTextView.setText(auto.toString());
 
             venderBtn.setOnClickListener(v -> {
                 mostrarDialogoConfirmacion("Vender",
@@ -349,13 +367,16 @@ public class DetalleAutoActivity extends AppCompatActivity {
                     });
             });
 
-            actualizarBtn.setOnClickListener(v -> {
-                mostrarDialogoActualizacion(auto);
-            });
+            actualizarBtn.setOnClickListener(v -> mostrarDialogoActualizacion(auto));
+            detallesBtn.setOnClickListener(v -> mostrarDialogoDetalles(auto));
 
-            detallesBtn.setOnClickListener(v -> {
-                mostrarDialogoDetalles(auto);
-            });
+            // Agregar márgenes y padding al item
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.setMargins(16, 8, 16, 8);
+            itemView.setLayoutParams(params);
 
             listaArticulosLayout.addView(itemView);
         }
