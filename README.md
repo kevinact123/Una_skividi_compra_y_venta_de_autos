@@ -13,7 +13,7 @@ Alcanse del proyecto:
 Manipulacion de la aplicacion:
 A continuacion se asignara una explicacion apropiada para el uso de esta aplicacion.
 Como primera instancia podemos apreciar que se puede inicaiar secion o ya se no poseemos una cuenta poder registrarnos:
-![Inicio de secion](Una_skividi_compra_y_venta_de_autos/capturas_de_funcionalidad/1.png)
+![Inicio de secion](Una_skividi_compra_y_venta_de_autos/capturas_de_funcionalidad/1.jpeg)
 ![Registrar usuario](Una_skividi_compra_y_venta_de_autos/capturas_de_funcionalidad/2.png)
 
 Ya dentro de nuestro main podemos selecconar la marca de vehiculo que se prefiera o que sea de gusto:
