@@ -1,6 +1,7 @@
 Nombre del proyecto:Una Skividi Compra y Venta de Autos.
 
 Proposito del proyecto:
+
 En esta aplicacion se busca poder generar una interfaz de confianza y agradable para los que requiera comprar o venrder su automovil de forma segura
 y confiable ademas de ser una transaccion mas rapida y de manera inmediata desesindonos de intermediarios o papeleo que dificulta dischas transacciones.
 
@@ -10,6 +11,7 @@ Ademas de ir implemenetando actualizaciones para mejorar estetica y demas aspect
 
 
 Manipulacion de la aplicacion:
+
 A continuacion se asignara una explicacion apropiada para el uso de esta aplicacion.
 Como primera instancia podemos apreciar que se puede inicaiar secion o ya se no poseemos una cuenta poder registrarnos:
 ![Inicio de secion](Una_skividi_compra_y_venta_de_autos/capturas_de_funcionalidad/1.jpeg)
