@@ -14,20 +14,25 @@ Manipulacion de la aplicacion:
 
 A continuacion se asignara una explicacion apropiada para el uso de esta aplicacion.
 Como primera instancia podemos apreciar que se puede inicaiar secion o ya se no poseemos una cuenta poder registrarnos:
+
 ![Inicio de secion](Una_skividi_compra_y_venta_de_autos/capturas_de_funcionalidad/1.jpeg)
 ![Registrar usuario](Una_skividi_compra_y_venta_de_autos/capturas_de_funcionalidad/2.jpeg)
 
 Ya dentro de nuestro main podemos selecconar la marca de vehiculo que se prefiera o que sea de gusto:
+
 ![Main principal](Una_skividi_compra_y_venta_de_autos/capturas_de_funcionalidad/3.jpeg)
 
 Esto nos dejara en una descripcion de los modelos disponibles y el rango de precios junto con los botones correspondientes para agregar al inventario el vehiculo deseado:
+
 ![Descripcion general](Una_skividi_compra_y_venta_de_autos/capturas_de_funcionalidad/4.jpeg)
 ![Confirmacion de compra](Una_skividi_compra_y_venta_de_autos/capturas_de_funcionalidad/5.jpeg)
 
 Ademas de eso dentro de nuestro inventario en el main podemos modificar las caracteristicas de nuestro vehiculo agregando nuevas caracteristicas o ya sea cambiar el color o al momento de venderlo modificar su precio.
+
 ![Inventario](Una_skividi_compra_y_venta_de_autos/capturas_de_funcionalidad/9.jpeg)
 ![Selecion de compra](Una_skividi_compra_y_venta_de_autos/capturas_de_funcionalidad/6.jpeg)
 ![Cambiar alguna caracteristica](Una_skividi_compra_y_venta_de_autos/capturas_de_funcionalidad/7.jpeg)
 
 Si se desea ver que cosas se han agragado al vehiculo o que caracteristica se ah actualizado siempre podemos irnos a nuertro boton de Detalles para asegurarnos de todos los cambios corrspondientes.
+
 ![Detalle Compra](Una_skividi_compra_y_venta_de_autos/capturas_de_funcionalidad/8.jpeg)
