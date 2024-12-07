@@ -6,8 +6,7 @@ y confiable ademas de ser una transaccion mas rapida y de manera inmediata deses
 
 Esta apk cuenta con una amplia gama de personalisacion para tu vehiculo de tus sueños ademas del color o el precio que mas encuentres reazonable.
 
-Alcanse del proyecto:
-
+Ademas de ir implemenetando actualizaciones para mejorar estetica y demas aspectos para mejores funcionalidades futuras por lo cual esta en constante pruebas para mejorar estos aspectos.
 
 
 Manipulacion de la aplicacion:
