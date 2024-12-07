@@ -36,3 +36,7 @@ Ademas de eso dentro de nuestro inventario en el main podemos modificar las cara
 Si se desea ver que cosas se han agragado al vehiculo o que caracteristica se ah actualizado siempre podemos irnos a nuertro boton de Detalles para asegurarnos de todos los cambios corrspondientes.
 
 ![Detalle Compra](Una_skividi_compra_y_venta_de_autos/capturas_de_funcionalidad/8.jpeg)
+
+PD:casi mato el proyecto profe XD queria implemetarle nuevas funcionalidades pero creo que tengo problema con el cruse de datos lo ire arreglando y investigando mas para una futura invercion me gusto mucho mi aplicacion falta mucho por aprender eso si le ire echando ganas.
+
+
